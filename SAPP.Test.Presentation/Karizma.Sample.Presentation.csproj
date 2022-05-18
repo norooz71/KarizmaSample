@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SAPP.Test.Domain\Karizma.Sample.Domain.csproj" />
+    <ProjectReference Include="..\SAPP.Test.Services.Abstractions\Karizma.Sample.Services.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
