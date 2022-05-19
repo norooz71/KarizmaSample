@@ -1,16 +1,13 @@
-﻿using Karizma.Sample.Domain.Entities.Base;
-using Karizma.Sample.Domain.Entities.Orders;
-using Karizma.Sample.Domain.Entities.Products;
-using Karizma.Sample.Domain.Enums;
+﻿using Karizma.Sample.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Karizma.Sample.Domain.Entities.ShoppingBaskets
+namespace Karizma.Sample.Services.Abstractions.Dtos
 {
-    public class ShoppingBasket:BaseEntity
+    public class ShoppingBasketDto
     {
         public int UserId { get; set; }
 
@@ -23,11 +20,12 @@ namespace Karizma.Sample.Domain.Entities.ShoppingBaskets
         #region Navigation Properties
 
         public int ProductId { get; set; }
-        public virtual Product Product { get; set; }
+        public  ProductDto Product { get; set; }
 
         public int? OrderId { get; set; }
-        public virtual Order Order { get; set; }
+        public virtual OrderDto Order { get; set; }
 
         #endregion
+
     }
 }

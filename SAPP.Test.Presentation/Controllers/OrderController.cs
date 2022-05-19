@@ -1,6 +1,9 @@
 ﻿using Karizma.Sample.Presentation.Filters;
+using Karizma.Sample.Presentation.Responses;
 using Karizma.Sample.Services.Abstractions;
+using Karizma.Sample.Services.Abstractions.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Karizma.Sample.Presentation.Controllers
@@ -25,5 +28,14 @@ namespace Karizma.Sample.Presentation.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var result=await _serviceManager.OrderService.GetAll();
+
+            return Ok(new BaseResponse<IEnumerable<OrderDto>>(true, 200, result, null));
+        }
+
     }
 }

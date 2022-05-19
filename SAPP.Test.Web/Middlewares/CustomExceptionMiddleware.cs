@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Karizma.Sample.Contracts.Utilities.Logger;
-using Karizma.Sample.Domain.Entities.Test;
+﻿using Karizma.Sample.Contracts.Utilities.Logger;
 using Karizma.Sample.Domain.Exeptions;
 using Karizma.Sample.Presentation.Responses;
 

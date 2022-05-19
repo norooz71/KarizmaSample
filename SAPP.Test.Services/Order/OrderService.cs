@@ -1,10 +1,13 @@
-﻿using Karizma.Sample.Domain.Entities.Orders;
+﻿using AutoMapper;
+using Karizma.Sample.Domain.Entities.Orders;
 using Karizma.Sample.Domain.Entities.ShoppingBaskets;
 using Karizma.Sample.Domain.Enums;
 using Karizma.Sample.Domain.Repositories;
 using Karizma.Sample.Services.Abstractions.Dtos;
 using Karizma.Sample.Services.Abstractions.Order;
+using Karizma.Sample.Services.Factories;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,27 +18,69 @@ namespace Karizma.Sample.Services.OrderServices
     {
         private readonly IUnitOfWork _unitOfWork;
 
+        private IOptions<PriceCalculatingSetting> _config;
+
         private readonly PriceCalculatingSetting priceSetting;
 
-        public OrderService(IUnitOfWork unitOfWork, IOptions<PriceCalculatingSetting> config)
+        private readonly IMapper _mapper;
+
+        public OrderService(IUnitOfWork unitOfWork, IOptions<PriceCalculatingSetting> config,IMapper mapper)
         {
             _unitOfWork = unitOfWork;
 
+            _config = config;
+
             priceSetting = config.Value;
+
+            _mapper = mapper;
         }
 
         public async Task Add(int userId)
         {
-            var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>().GetAllAccending(s => s.UserId == userId, s => s.Id, "Product");
+            var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>()
+                .GetAllAccending(s => s.UserId == userId && s.Status==PayStatus.NotPay, s => s.Id, "Product");
 
-            var order =await MakeOrder(userId, shoppingBaskets);  
+            var order =await MakeOrder(userId, shoppingBaskets);
+
+            order.ShoppingBaskets = shoppingBaskets;
 
             await _unitOfWork.GetRepository<Order>().Create(order);
 
             var result=await _unitOfWork.SaveChangesAsync();
 
-            await UpdateShoppingBaskets(userId,result);
         }
+
+        public async Task<IEnumerable<OrderDto>> GetAll()
+        {
+            var orders =await _unitOfWork.GetRepository<Order>().GetAllAccending(o=>true, o => o.Id, "ShoppingBaskets");
+
+            var result = new List<OrderDto>();
+
+            var order = orders.First();
+
+            try
+            {
+                 var x = _mapper.Map<OrderDto>(order);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            try
+            {
+                var f = _mapper.Map<IEnumerable<OrderDto>>(orders);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return result;
+        } 
+
 
         private async Task<Order> MakeOrder(int userId,IEnumerable<ShoppingBasket> shoppingBaskets)
         {
@@ -43,7 +88,7 @@ namespace Karizma.Sample.Services.OrderServices
             {
                 UserId = userId,
                 CreateTime = System.DateTime.Now,
-                Status = Domain.Enums.OrderStatus.NotPay,
+                Status = Domain.Enums.PayStatus.NotPay,
                 FinalPrice = await CalculatePice(userId),
                 DisCountAmount = priceSetting.OrderDiscountAmountEnable ? priceSetting.OrderDiscountAmount : 0,
                 DiscountPercent = priceSetting.OrderDiscountPercentEnable ? priceSetting.OrderDiscountPercent : 0,
@@ -52,19 +97,15 @@ namespace Karizma.Sample.Services.OrderServices
             };
         }
 
-        public async Task<int> CalculatePice(int userId)
+        public async Task<decimal> CalculatePice(int userId)
         {
-            var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>().GetAllAccending(s => s.UserId == userId, s => s.Id, "Product");
+            var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>().GetAllAccending(s => s.UserId == userId && s.Status==PayStatus.NotPay, s => s.Id, "Product");
 
-            var price = shoppingBaskets.Sum(s => s.Product.Price);
+            var calculatingType = new CalculatingType(_config);
 
-            var productProfit = priceSetting.ProductProfitEnable ? shoppingBaskets.Count() * priceSetting.productProfitAmount : 0;
+            var condition = calculatingType.Set();
 
-            var orderDiscountPercent = priceSetting.OrderDiscountPercentEnable ? priceSetting.OrderDiscountPercent : 0;
-
-            var orderDiscountAmount = priceSetting.OrderDiscountAmountEnable ? priceSetting.OrderDiscountAmount : 0;
-
-            return 10;
+            return condition.Calculate(shoppingBaskets);
 
         }
 
@@ -80,18 +121,5 @@ namespace Karizma.Sample.Services.OrderServices
             return PostType.Usual;
         }
 
-        private async Task UpdateShoppingBaskets(int userId,int orderId)
-        {
-            var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>().GetAllAccending(s => s.UserId == userId, s => s.Id, "Product");
-
-            foreach (var item in shoppingBaskets)
-            {
-                item.OrderId = orderId;
-
-                item.UpdateTime = System.DateTime.Now;
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-        }
     }
 }

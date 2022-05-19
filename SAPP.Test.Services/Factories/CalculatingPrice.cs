@@ -1,40 +1,60 @@
 ﻿using Karizma.Sample.Domain.Entities.ShoppingBaskets;
 using Karizma.Sample.Services.Abstractions.Dtos;
 using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Karizma.Sample.Services.Factories
 {
     public class CalculatingType
     {
-        public readonly IOptions<PriceCalculatingSetting> _setting;
-        public CalculatingType(IOptions<PriceCalculatingSetting> Setting)
+        public readonly IOptions<PriceCalculatingSetting> _priceCalculatingSetting;
+        
+        public readonly PriceCalculatingSetting _setting;
+
+
+        public CalculatingType(IOptions<PriceCalculatingSetting> priceCalculatingSetting)
         {
-            _setting = Setting.Value;
+            _priceCalculatingSetting = priceCalculatingSetting;
+
+            _setting = _priceCalculatingSetting.Value;
         }
         public   CalculatingPrice Set()
         {
-            condition condition = condition.a;
 
             if (!_setting.OrderDiscountPercentEnable && !_setting.OrderDiscountAmountEnable && !_setting.ProductProfitEnable )
             {
-                return new NoDiscountPercentNoDiscountAmountNoProfit(_setting);
+                return new NoDiscountPercentNoDiscountAmountNoProfit(_priceCalculatingSetting);
+            }
+            
+            if (_setting.OrderDiscountPercentEnable && _setting.OrderDiscountAmountEnable && _setting.ProductProfitEnable )
+            {
+                return new DiscountPercentDiscountAmountProfit(_priceCalculatingSetting);
+            } 
+            
+            if (_setting.OrderDiscountPercentEnable && _setting.OrderDiscountAmountEnable && !_setting.ProductProfitEnable )
+            {
+                return new DiscountPercentDiscountAmountNoProfit(_priceCalculatingSetting);
+            }   
+            
+            if (!_setting.OrderDiscountPercentEnable && _setting.OrderDiscountAmountEnable && !_setting.ProductProfitEnable )
+            {
+                return new NoDiscountPercentDiscountAmountNoProfit(_priceCalculatingSetting);
+            }
+            
+            if (!_setting.OrderDiscountPercentEnable && !_setting.OrderDiscountAmountEnable && _setting.ProductProfitEnable )
+            {
+                return new NoDiscountPercentNoDiscountAmountProfit(_priceCalculatingSetting);
+            }
+            
+            if (!_setting.OrderDiscountPercentEnable && _setting.OrderDiscountAmountEnable && _setting.ProductProfitEnable )
+            {
+                return new NoDiscountPercentDiscountAmountProfit(_priceCalculatingSetting);
             }
 
+            return  new DiscountPercentDiscountAmountProfit(_priceCalculatingSetting);
         }
     }
-
-        public enum condition
-        {
-            a,
-            b,
-            c
-        }
-
 
     public abstract class CalculatingPrice
     {
@@ -43,7 +63,7 @@ namespace Karizma.Sample.Services.Factories
         {
             _priceCalculatingSetting=PriceCalculatingSetting.Value; 
         }
-        public abstract int Calculate(IEnumerable<ShoppingBasket> shoppingBaskets);
+        public abstract decimal Calculate(IEnumerable<ShoppingBasket> shoppingBaskets);
     }
 
     public class NoDiscountPercentNoDiscountAmountNoProfit : CalculatingPrice
@@ -52,7 +72,7 @@ namespace Karizma.Sample.Services.Factories
         {
         }
 
-        public override int Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
+        public override decimal Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
         {
             return shoppingBaskets.Sum(s => s.Product.Price);
         }
@@ -64,7 +84,7 @@ namespace Karizma.Sample.Services.Factories
         {
         }
 
-        public override int Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
+        public override decimal Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
         {
             var shoppingBasketsPrice=shoppingBaskets.Sum(s=>s.Product.Price);
 
@@ -79,7 +99,7 @@ namespace Karizma.Sample.Services.Factories
         {
         }
 
-        public override int Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
+        public override decimal Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
         {
             var shoppingBasketsPrice = shoppingBaskets.Sum(s => s.Product.Price);
 
@@ -94,7 +114,7 @@ namespace Karizma.Sample.Services.Factories
         {
         }
 
-        public override int Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
+        public override decimal Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
         {
             var shoppingBasketsPrice = shoppingBaskets.Sum(s => s.Product.Price);
 
@@ -111,13 +131,13 @@ namespace Karizma.Sample.Services.Factories
         {
         }
 
-        public override int Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
+        public override decimal Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
         {
             var shoppingBasketsPrice = shoppingBaskets.Sum(s => s.Product.Price);
 
             var profit = shoppingBaskets.Count() * _priceCalculatingSetting.productProfitAmount;
 
-            var Discount = (shoppingBasketsPrice + profit) * _priceCalculatingSetting.OrderDiscountAmount;
+            var Discount = (shoppingBasketsPrice + profit) * _priceCalculatingSetting.OrderDiscountPercent;
 
             return shoppingBasketsPrice + profit - Discount - _priceCalculatingSetting.OrderDiscountAmount;
         }
@@ -128,7 +148,7 @@ namespace Karizma.Sample.Services.Factories
         {
         }
 
-        public override int Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
+        public override decimal Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
         {
             var shoppingBasketsPrice = shoppingBaskets.Sum(s => s.Product.Price);
 
@@ -143,7 +163,7 @@ namespace Karizma.Sample.Services.Factories
         {
         }
 
-        public override int Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
+        public override decimal Calculate(IEnumerable<ShoppingBasket> shoppingBaskets)
         {
             var shoppingBasketsPrice = shoppingBaskets.Sum(s => s.Product.Price);
 

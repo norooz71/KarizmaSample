@@ -9,11 +9,9 @@ namespace Karizma.Sample.Domain.Entities.Products
     {
         public string Name { get; set; }
 
-        public int Price { get; set; }
+        public decimal Price { get; set; }
 
         public ProductType Type { get; set; }
-
-        public int ProfitAmount { get; set; }
 
 
 

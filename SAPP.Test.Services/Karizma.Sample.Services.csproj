@@ -15,4 +15,8 @@
     <ProjectReference Include="..\SAPP.Test.Services.Abstractions\Karizma.Sample.Services.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Test\" />
+  </ItemGroup>
+
 </Project>

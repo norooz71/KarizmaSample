@@ -1,15 +1,13 @@
-﻿using Karizma.Sample.Domain.Entities.Base;
-using Karizma.Sample.Domain.Entities.ShoppingBaskets;
-using Karizma.Sample.Domain.Enums;
+﻿using Karizma.Sample.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Karizma.Sample.Domain.Entities.Orders
-{
-    public class Order : BaseEntity
+namespace Karizma.Sample.Services.Abstractions.Dtos;
+
+    public class OrderDto:BaseDto
     {
         public int UserId { get; set; }
 
@@ -23,6 +21,8 @@ namespace Karizma.Sample.Domain.Entities.Orders
 
         public decimal DisCountAmount { get; set; }
 
-        public ICollection<ShoppingBasket> ShoppingBaskets { get; set; }
+        public IEnumerable<ShoppingBasketDto> ShoppingBaskets { get; set; }
     }
-}
+
+    
+

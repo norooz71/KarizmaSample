@@ -4,6 +4,7 @@ using Karizma.Sample.Persistance.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Karizma.Sample.Persistance.Migrations
 {
     [DbContext(typeof(RepositoryDbContext))]
-    partial class RepositoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220519060508_add-status-to-shoppingbasket")]
+    partial class addstatustoshoppingbasket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,14 +35,14 @@ namespace Karizma.Sample.Persistance.Migrations
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("DisCountAmount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("DisCountAmount")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("DiscountPercent")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("DiscountPercent")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("FinalPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("FinalPrice")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -74,8 +76,11 @@ namespace Karizma.Sample.Persistance.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProfitAmount")
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -102,14 +107,14 @@ namespace Karizma.Sample.Persistance.Migrations
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("PriceAtBuyTime")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("PriceAtBuyTime")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("ProfitAtBuyTime")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ProfitAtBuyTime")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

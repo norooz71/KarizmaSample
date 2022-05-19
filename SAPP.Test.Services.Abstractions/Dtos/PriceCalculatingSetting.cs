@@ -4,11 +4,11 @@
     {
         public bool ProductProfitEnable { get; set; }
 
-        public int productProfitAmount { get; set; }
+        public decimal productProfitAmount { get; set; }
 
         public bool OrderDiscountPercentEnable { get; set; }
 
-        public int OrderDiscountPercent { get; set; }
+        public decimal OrderDiscountPercent { get; set; }
 
         public bool OrderDiscountAmountEnable { get; set; }
 

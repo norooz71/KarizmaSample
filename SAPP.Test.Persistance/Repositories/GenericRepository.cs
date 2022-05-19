@@ -22,7 +22,7 @@ namespace Karizma.Sample.Persistance.Repositories
 
         public async Task Create(T model)
         {
-            await _context.AddAsync(model);
+             await _context.AddAsync(model);
         }
 
         public async Task<T> Update(T model)

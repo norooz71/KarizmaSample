@@ -1,4 +1,5 @@
-﻿using Karizma.Sample.Domain.Repositories;
+﻿using AutoMapper;
+using Karizma.Sample.Domain.Repositories;
 using Karizma.Sample.Services.Abstractions;
 using Karizma.Sample.Services.Abstractions.Dtos;
 using Karizma.Sample.Services.Abstractions.Order;
@@ -13,9 +14,9 @@ namespace Karizma.Sample.Services
         
         private readonly Lazy<IOrderService> _lazyOrderService;
 
-        public ServiceManager(IUnitOfWork unitOfWork,IOptions<PriceCalculatingSetting> config)
+        public ServiceManager(IUnitOfWork unitOfWork,IOptions<PriceCalculatingSetting> config,IMapper mapper)
         {
-            _lazyOrderService = new Lazy<IOrderService>(() => new OrderService(unitOfWork,config));
+            _lazyOrderService = new Lazy<IOrderService>(() => new OrderService(unitOfWork,config,mapper));
 
         }
 

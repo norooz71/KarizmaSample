@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SAPP.Test.Contracts\Karizma.Sample.Contracts.csproj" />
+    <ProjectReference Include="..\SAPP.Test.Domain\Karizma.Sample.Domain.csproj" />
   </ItemGroup>
 
 </Project>
