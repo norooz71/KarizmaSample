@@ -10,13 +10,9 @@ namespace Karizma.Sample.Services
     {
         public MapperProfile()
         {
-
-            var config = new MapperConfiguration(cfg => {
-                cfg.CreateMap<OrderDto, Order>().ReverseMap();
-                cfg.CreateMap<ShoppingBasketDto, ShoppingBasket>().ReverseMap();
-                cfg.CreateMap<ProductDto, Product>().ReverseMap();
-                
-            });
+                CreateMap<Order,OrderDto>().ReverseMap();
+                CreateMap<ShoppingBasket,ShoppingBasketDto>().ReverseMap();
+                CreateMap<Product,ProductDto>().ReverseMap();
 
         }
 

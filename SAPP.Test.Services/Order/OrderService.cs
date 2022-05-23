@@ -24,7 +24,7 @@ namespace Karizma.Sample.Services.OrderServices
 
         private readonly IMapper _mapper;
 
-        public OrderService(IUnitOfWork unitOfWork, IOptions<PriceCalculatingSetting> config,IMapper mapper)
+        public OrderService(IUnitOfWork unitOfWork, IOptions<PriceCalculatingSetting> config, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
 
@@ -38,53 +38,31 @@ namespace Karizma.Sample.Services.OrderServices
         public async Task Add(int userId)
         {
             var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>()
-                .GetAllAccending(s => s.UserId == userId && s.Status==PayStatus.NotPay, s => s.Id, "Product");
+                .GetAllAccending(s => s.UserId == userId && s.Status == PayStatus.NotPay, s => s.Id, "Product");
 
-            var order =await MakeOrder(userId, shoppingBaskets);
+            var order = await MakeOrder(userId, shoppingBaskets);
 
             order.ShoppingBaskets = shoppingBaskets;
 
             await _unitOfWork.GetRepository<Order>().Create(order);
 
-            var result=await _unitOfWork.SaveChangesAsync();
+            var result = await _unitOfWork.SaveChangesAsync();
 
         }
 
         public async Task<IEnumerable<OrderDto>> GetAll()
         {
-            var orders =await _unitOfWork.GetRepository<Order>().GetAllAccending(o=>true, o => o.Id, "ShoppingBaskets");
+            var orders = await _unitOfWork.GetRepository<Order>().GetAllAccending(o => true, o => o.Id, "ShoppingBaskets");
 
-            var result = new List<OrderDto>();
-
-            var order = orders.First();
-
-            try
-            {
-                 var x = _mapper.Map<OrderDto>(order);
-
-            }
-            catch (Exception ex)
-            {
-
-            }
-
-            try
-            {
-                var f = _mapper.Map<IEnumerable<OrderDto>>(orders);
-
-            }
-            catch (Exception ex)
-            {
-
-            }
+            var result = _mapper.Map<IEnumerable<OrderDto>>(orders);
 
             return result;
-        } 
+        }
 
 
-        private async Task<Order> MakeOrder(int userId,IEnumerable<ShoppingBasket> shoppingBaskets)
+        private async Task<Order> MakeOrder(int userId, IEnumerable<ShoppingBasket> shoppingBaskets)
         {
-            return  new Order
+            return new Order
             {
                 UserId = userId,
                 CreateTime = System.DateTime.Now,
@@ -99,7 +77,7 @@ namespace Karizma.Sample.Services.OrderServices
 
         public async Task<decimal> CalculatePice(int userId)
         {
-            var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>().GetAllAccending(s => s.UserId == userId && s.Status==PayStatus.NotPay, s => s.Id, "Product");
+            var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>().GetAllAccending(s => s.UserId == userId && s.Status == PayStatus.NotPay, s => s.Id, "Product");
 
             var calculatingType = new CalculatingType(_config);
 
@@ -113,7 +91,7 @@ namespace Karizma.Sample.Services.OrderServices
         {
             var shoppingBaskets = await _unitOfWork.GetRepository<ShoppingBasket>().GetAllAccending(s => s.UserId == userId, s => s.Id, "Product");
 
-            if (shoppingBaskets.Any(s=>s.Product.Type==ProductType.Breakable))
+            if (shoppingBaskets.Any(s => s.Product.Type == ProductType.Breakable))
             {
                 return PostType.Express;
             }

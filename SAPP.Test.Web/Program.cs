@@ -16,11 +16,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddApplicationPart(typeof(OrderController).Assembly);
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(OrderController).Assembly);
+
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IServiceManager,ServiceManager>();
+//builder.Services.AddScoped<IServiceManager,ServiceManager>();
+
+builder.Services.AddServiceManager();
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(),"/nlog.config"));
 
@@ -31,13 +39,7 @@ builder.Services.AddDbContext<RepositoryDbContext>(dbBuilder =>
     dbBuilder.UseSqlServer(connectionString);
 
 });
-var mapConfig = new MapperConfiguration(mc =>
-  mc.AddProfile(new MapperProfile())
-);
-
-IMapper mapper=mapConfig.CreateMapper();
-
-builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(typeof(MapperProfile));
 
 builder.Services.AddSingleton<ILoggerManager,LoggerManager>();
 
