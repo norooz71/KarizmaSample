@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Alexinea.Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SAPP.Test.Contracts\Karizma.Sample.Contracts.csproj" />
     <ProjectReference Include="..\SAPP.Test.Domain\Karizma.Sample.Domain.csproj" />
   </ItemGroup>
